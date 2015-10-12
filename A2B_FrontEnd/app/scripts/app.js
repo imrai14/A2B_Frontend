@@ -18,6 +18,19 @@ angular
     'ngTouch'
   ])
   .config(function ($routeProvider) {
+
+  //   var resolve = {
+  //     auth: function ($location, UserService){
+  //       return UserService.userDetails()
+  //       .then(function(user){
+
+  //       })
+  //     .catch(function(err){
+  //       $location.path('/');
+  //     });
+  //   }
+  // };
+
     $routeProvider
       .when('/', {
         templateUrl: 'views/login.html',
@@ -26,7 +39,8 @@ angular
       .when('/userprofile', {
 
         templateUrl: 'views/userProfile.html',
-        controller: 'UserCtrl'
+        controller: 'UserProfileCtrl',
+        // resolve : resolve
 
       })
 

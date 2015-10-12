@@ -8,8 +8,8 @@
  * Controller of the a2BClientApp
  */
 angular.module('a2BClientApp')
-  .controller('UserCtrl', function ($scope,UserService,$location,$rootScope) {
-    
+  .controller('UserCtrl', function ($scope, UserService, $location,$rootScope,$cookies,$cookieStore) {
+     
 // $(function() {
 
 //  $("#login-form").validate({
@@ -170,13 +170,23 @@ angular.module('a2BClientApp')
 })
 
 
-	
+
 
 	$scope.registerUser = function(data){
 		console.log('from register form',data);
 		UserService.register(data)
 		.then(function(response){
 			console.log('resp',response);
+			// alert("you are registed successfull");
+			// $('#register-form-link').removeClass('active');
+   //  		
+	   		$("#login-form").delay(100).fadeIn(100);
+	 		$("#register-form").fadeOut(100);
+	 		
+			$('#register-form-link').removeClass('active');
+		
+			$('#login-form-link').addClass('active');
+			$scope.message = "You have Registered Successfully Please verify and Login";
 		}).catch(function(err){
 			$scope.error = err;
 		})
@@ -188,24 +198,15 @@ angular.module('a2BClientApp')
 		.then(function(response){
 			console.log('resp',response);
 			$location.path('/userprofile')
-			$rootScope.user = response.user;
+			var user = response.user;
+			var sessionObj ={'user':response.user};
+			$cookieStore.put('User',sessionObj);
 		}).catch(function(err){
 			$scope.error = err;
 		})
 	}
 
-	$scope.logout = function(){
-		console.log('from form',data);
-		var data = $rootScope.user;
-		UserService.logout(data)
-		.then(function(response){
-			console.log('resp',response);
-			$location.path('/login')
-			$rootScope.user = response.user;
-		}).catch(function(err){
-			$scope.error = err;
-		})
-	}
+	
 
 	$scope.delete = function(id){
 		console.log('from form',id);

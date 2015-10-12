@@ -1,6 +1,25 @@
 angular.module('a2BClientApp')
-  .service('UserService', function ($q, $http, $resource,$rootScope) {
+  .service('UserService', function ($q, $http, $resource,$rootScope, $cookieStore) {
   	var baseUrl = 'http://localhost:1337';
+
+    this.userDetails = function(){
+      var deferred = $q.defer();
+      var UserProfile = $cookieStore.get('User');
+      $rootScope.user = UserProfile.user;
+      var headers = { 'Authorization': $rootScope.user.token };
+      // $http.post(baseUrl+'user/signup',user)
+      $http.get(baseUrl+'/user')
+      .success(function(response){
+        $rootScope.user=response;
+        deferred.resolve(response);
+      })
+      .error(function(err){
+        deferred.reject(err);
+      })
+
+      return deferred.promise;
+    }
+
 
   	this.register = function(user){
   		var deferred = $q.defer();
@@ -8,6 +27,7 @@ angular.module('a2BClientApp')
   		// $http.post(baseUrl+'user/signup',user)
   		$http.post(baseUrl+'/user/signup',user)
   		.success(function(response){
+        
   			deferred.resolve(response);
   		})
   		.error(function(err){
@@ -33,11 +53,12 @@ angular.module('a2BClientApp')
   		return deferred.promise;
   	}
 
-      this.logout = function(data){
+      this.logout = function(authToken){
       var deferred = $q.defer();
 
+      var headers = { 'Authorization': 'Bearer '+ authToken };
       // $http.post(baseUrl+'user/signup',user)
-      $http.get(baseUrl+'/user/logout',data)
+      $http.get(baseUrl+'/user/logout',{ headers: headers })
       .success(function(response){
         
         deferred.resolve(response);
